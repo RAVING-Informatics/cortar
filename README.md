@@ -11,19 +11,72 @@ and report the proportion of splicing events across each intron. By comparing
 these values to controls, deviations from normal splicing can be characterised
 in test samples.
 
-## Installation
+# Installation
 
-You can install the development version of cortar from
-[GitHub](https://github.com/) with: 
+- cortar was built in R 4.1.3, compiled for Intel. I recommend installing a program which can manage different R versions.
+- Note, I could not get cortar working for R 4.1.3 compiled for arm64-based Macs. I have an arm64-baseed Mac, but thankfully R binaries built for Intel run on Apple silicon.
 
-``` r
+## Multiple R versions
+
+- Install a program which will let you switch between multiple R versions. I use RSwitch.
+
+### Install RSwitch
+
+- Install RSwitch according to the instructions in the [following link](https://rud.is/b/2020/11/18/apple-silicon-big-sur-rstudio-r-field-report/).
+    - Download link [RSwitch-2.0.0b.app.zip](https://rud.is/rswitch/releases/RSwitch-2.0.0b.app.zip)
+- Open RStudio and navigate to terminal.
+- Following [these instructions](https://code2care.org/macos/macos-r-installation-steps), [and these instructions](https://cran.csiro.au/doc/manuals/r-devel/R-admin.pdf) (page 21) run the following to forget existing R package installation.
+    - This is done so that new installations do not override existing installations. Note you will need to adapt these based on what system the binaries were compiled for (mine was a3m64). Use x86_64, if you use Intel.
+
+```bash
+sudo pkgutil --forget org.R-project.arm64.R.fw.pkg
+sudo pkgutil --forget org.r-project.arm64.texinfo
+sudo pkgutil --forget org.r-project.arm64.tcltk.x11 #tried but did not work
+sudo pkgutil --forget org.R-project.R.GUI.pkg
+sudo pkgutil --forget org.R-project.R.fw.pkg
+```
+
+- Find the R v4.1.3 precompiled binary
+    - Available [here](https://cran.r-project.org/) for Intel
+    - Install it using defaults
+
+## Install cortar on 4.1.3-Intel
+
+- Follow instructions on GitHub
+    - If `devtools` isn't installed, then install it.
+
+```r
+install.packages("devtools")
+```
+
+- Install dependencies
+
+```r
+#installation for R v4.1
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("GenomicRanges")
+
+BiocManager::install("GenomicFeatures")
+
+BiocManager::install("GenomicAlignments")
+
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg38")
+
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+
+BiocManager::install("BSgenome.Hsapiens.1000genomes.hs37d5")
+```
+
+- Install `cortar`
+
+```r
 # install.packages("devtools")
 devtools::install_github("kidsneuro-lab/RNA_splice_tool")
 ```
 
-cortar was built in R 4.1.3
-
-## Usage
+# Usage
 To use cortar, a samplefile needs to be created for each run. This file
 contains six tab separated columns and a row for each sample (as shown below):
 * sampleID: A unique identifier for the sample (alphanumeric symbols and underscores only)
